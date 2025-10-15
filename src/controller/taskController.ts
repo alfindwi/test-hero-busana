@@ -17,7 +17,7 @@ export const getTasks = async (req: Request, res: Response) => {
 export const getTaskById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const task = await taskService.getTaskById(id);
+    const task = await taskService.getTaskById(Number(id));
 
     res.status(200).json(task);
   } catch (error) {
@@ -44,33 +44,31 @@ export const createTask = async (req: Request, res: Response) => {
 };
 
 export const updateTask = async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params;
-        const data = req.body;
-        const task = await taskService.updateTask(id, data);
-    
-        res.status(200).json(task);
-        
-    } catch (error) {
-        console.log("Update Task Error ", error);
-        const message = (error as Error).message;
-    
-        res.status(500).json({ message });
-    }
-}
+  try {
+    const { id } = req.params;
+    const data = req.body;
+    const task = await taskService.updateTask(Number(id), data);
+
+    res.status(200).json(task);
+  } catch (error) {
+    console.log("Update Task Error ", error);
+    const message = (error as Error).message;
+
+    res.status(500).json({ message });
+  }
+};
 
 export const deleteTask = async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params;
-        const userId = res.locals.user.id;
-        const task = await taskService.deleteTask(id, userId);
-    
-        res.status(200).json(task);
-        
-    } catch (error) {
-        console.log("Delete Task Error ", error);
-        const message = (error as Error).message;
-    
-        res.status(500).json({ message });
-    }
-}
+  try {
+    const { id } = req.params;
+    const userId = res.locals.user.id;
+    const task = await taskService.deleteTask(Number(id), userId);
+
+    res.status(200).json(task);
+  } catch (error) {
+    console.log("Delete Task Error ", error);
+    const message = (error as Error).message;
+
+    res.status(500).json({ message });
+  }
+};

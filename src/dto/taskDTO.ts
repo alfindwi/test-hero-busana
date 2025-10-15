@@ -4,7 +4,7 @@ export interface CreateTaskDTO {
   description: string;
   startDate: Date;
   endDate: Date;
-  userId: string; 
+  assignedTo: number; 
 }
 
 export interface UpdateTaskDTO {

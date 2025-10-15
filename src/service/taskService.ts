@@ -22,7 +22,7 @@ export const getTasks = async () => {
   }
 };
 
-export const getTaskById = async (id: string) => {
+export const getTaskById = async (id: number) => {
   try {
     const task = await prisma.task.findUnique({
       where: {
@@ -46,21 +46,41 @@ export const getTaskById = async (id: string) => {
   }
 };
 
-export const createTask = async (data: CreateTaskDTO, userId: string) => {
+export const createTask = async (data: CreateTaskDTO, userId: number) => {
   try {
     const user = await prisma.user.findUnique({
       where: {
         id: userId,
-        role: "ProjectManager"
+        role: "ProjectManager",
       },
     });
 
     if (!user) {
-      throw new Error("User not found");
+      throw new Error("Unauthorized: only ProjectManager can create task");
+    }
+
+    const assignee = await prisma.user.findUnique({
+      where: {
+        id: data.assignedTo,
+      },
+      select: {
+        name: true,
+        role: true,
+      },
+    });
+
+    if (!assignee) {
+      throw new Error("Assignee not found");
     }
 
     const task = await prisma.task.create({
-      data,
+      data: {
+        name: data.name,
+        description: data.description,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        assignedTo: data.assignedTo,
+      },
     });
 
     return task;
@@ -72,7 +92,7 @@ export const createTask = async (data: CreateTaskDTO, userId: string) => {
   }
 };
 
-export const updateTask = async (id: string, data: UpdateTaskDTO) => {
+export const updateTask = async (id: number, data: UpdateTaskDTO) => {
   try {
     const existingTask = await prisma.task.findUnique({
       where: {
@@ -116,7 +136,7 @@ export const updateTask = async (id: string, data: UpdateTaskDTO) => {
   }
 };
 
-export const deleteTask = async (id: string, userId : string) => {
+export const deleteTask = async (id: number, userId: number) => {
   try {
     const user = await prisma.user.findUnique({
       where: {
@@ -132,19 +152,21 @@ export const deleteTask = async (id: string, userId : string) => {
       where: {
         id,
       },
-    })
+    });
 
     if (!existingTask) {
       throw new Error("Task not found");
     }
 
-    const deletedTask = await prisma.task.delete({
+    await prisma.task.delete({
       where: {
         id,
       },
     });
 
-    return deletedTask;
+    return {
+      message: "Task deleted successfully",
+    };
   } catch (error) {
     console.error("delete Task Error:", error);
     if (error instanceof Error && error.message) {

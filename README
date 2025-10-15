@@ -1,0 +1,52 @@
+# Workflow Test Hero Busana – Backend
+
+- Project Manager register -> Redirect ke halaman login
+- Project Manager login -> Mendapatkan token autentikasi
+- Project Manager membuat task -> mengisi data seperti nama, deskripsi, tanggal mulai, tanggal selesai dan assignedTo (userId)
+- Project Manager memperbarui status task : Pending -> InProgress -> Completed
+- Hanya Project Manager yang memiliki akses penuh ke aplikasi.Data Developer/QA/QC hanya digunakan sebagai contoh assignee agar task terlihat realistis dan dapat langsung di-insert ke file schema.sql setelah migrasi database.
+
+## Getting Started
+
+### 1. Clone the Project
+
+```bash
+git clone https://github.com/alfindwi/test-hero-busana.git
+cd test-hero-busana
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3.Konfigurasi Environment
+
+```bash
+PORT=
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/hero_busana?
+schema=public"
+JWT_SECRET=
+```
+
+### 4. Generate Prisma Client
+
+```bash
+npx prisma generate
+```
+
+### 5. Migrate Database
+
+```bash
+npx prisma migrate dev --name init
+```
+
+### 6. Insert Data Dummy User
+
+```bash
+INSERT INTO "User" (name, email, password, role) VALUES
+('alfin','AlfinDev@mail.com', '123456', 'Developer'),
+('furi','FuriQA@mail.com', '123456', 'QA'),
+('cahya','CahyaQC@mail.com', '123456', 'QC');
+```

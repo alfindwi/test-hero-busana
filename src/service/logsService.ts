@@ -1,6 +1,6 @@
 import { prisma } from "../libs/prisma";
 
-export const getLogsById = async (id: string) => {
+export const getLogsById = async (id: number) => {
   try {
     const logs = await prisma.taskLogs.findMany({
       where: {

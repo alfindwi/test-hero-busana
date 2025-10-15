@@ -14,27 +14,27 @@ datasource db {
 }
 
 model User {
-  id   String @id @default(uuid())
-  name String
-  email String @unique
-  password String
-  role Role @default(Developer)
+  id         Int      @id @unique() @default(autoincrement())
+  name       String
+  email      String   @unique
+  password   String
+  role       Role     @default(ProjectManager)
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
 
-  tasks Task[]
+  AssignedTasks Task[] @relation("AssignedTasks")
 }
 
 model Task {
-  id      String @id @default(uuid())
-  name    String
-  status  Status @default(Pending)
+  id          Int      @id @default(autoincrement())
+  name        String
+  status      Status   @default(Pending)
   description String
-  startDate DateTime
-  endDate DateTime
-  
-  userId String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  startDate   DateTime
+  endDate     DateTime
+
+  assignedTo Int
+  assignee   User     @relation("AssignedTasks", fields: [assignedTo], references: [id], onDelete: Cascade, onUpdate: Cascade)
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
 
@@ -42,13 +42,13 @@ model Task {
 }
 
 model TaskLogs {
-  id      String @id @default(uuid())
-  taskId String
-  task Task @relation(fields: [taskId], references: [id] , onDelete: Cascade, onUpdate: Cascade)
+  id              Int      @id @default(autoincrement())
+  taskId          Int
+  task            Task     @relation(fields: [taskId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   previous_status Status
-  new_status Status
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now())
+  new_status      Status
+  created_at      DateTime @default(now())
+  updated_at      DateTime @default(now())
 }
 
 enum Status {

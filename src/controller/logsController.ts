@@ -4,7 +4,7 @@ import * as logService from "../service/logsService";
 export const getTaskByid = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const logs = await logService.getLogsById(id);
+    const logs = await logService.getLogsById(Number(id));
 
     res.status(200).json(logs);
   } catch (error) {
