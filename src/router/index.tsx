@@ -1,6 +1,7 @@
 import Dashboard from "@/page/dashboardPage";
 import RootLayout from "@/page/layouts/rootLayout";
 import { Login } from "@/page/loginPage";
+import { Register } from "@/page/registerPage";
 import {
   createBrowserRouter,
   RouterProvider,
@@ -17,6 +18,10 @@ const route: RouteObject[] = [
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
   },
 ];
 

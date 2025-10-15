@@ -41,6 +41,20 @@ export function Navbar() {
                 </Button>
               </DropdownMenuItem>
             </DropdownMenuContent>
+            <DropdownMenuContent
+              align="end"
+              className="bg-red-500 border border-black/20 rounded-xl w-52 px-2 py-2 shadow-[6px_6px_0px_#222] font-mono"
+            >
+              <DropdownMenuItem
+                asChild
+                className="data-[highlighted]:bg-red-500 data-[highlighted]:text-white data-[highlighted]:outline-none"
+              >
+                <Button className="flex justify-start items-center text-left text-sm cursor-pointer font-mono w-full px-3 py-2 rounded-lg transition bg-red-500 hover:bg-red-500 hover:text-white">
+                  <DoorOpen className="text-white" />
+                  Logout
+                </Button>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
