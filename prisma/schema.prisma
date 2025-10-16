@@ -21,7 +21,7 @@ model User {
   role       Role     @default(ProjectManager)
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
-
+  
   AssignedTasks Task[] @relation("AssignedTasks")
 }
 
@@ -30,8 +30,8 @@ model Task {
   name        String
   status      Status   @default(Pending)
   description String
-  startDate   DateTime
-  endDate     DateTime
+  startDate   String
+  endDate     String
 
   assignedTo Int
   assignee   User     @relation("AssignedTasks", fields: [assignedTo], references: [id], onDelete: Cascade, onUpdate: Cascade)

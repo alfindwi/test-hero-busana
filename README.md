@@ -4,7 +4,7 @@
 - Project Manager login -> Mendapatkan token autentikasi
 - Project Manager membuat task -> mengisi data seperti nama, deskripsi, tanggal mulai, tanggal selesai dan assignedTo (userId)
 - Project Manager memperbarui status task : Pending -> InProgress -> Completed
-- Hanya Project Manager yang memiliki akses penuh ke aplikasi.Data Developer/QA/QC hanya digunakan sebagai contoh assignee agar task terlihat realistis dan dapat langsung di-insert ke file schema.sql setelah migrasi database.
+- Hanya Project Manager yang memiliki akses penuh ke aplikasi ini. Data Developer/QA/QC hanya digunakan sebagai contoh assignee agar task terlihat realistis dan dapat langsung di-insert ke file schema.sql setelah migrasi database.
 
 ## Getting Started
 

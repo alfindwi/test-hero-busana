@@ -28,6 +28,19 @@ export const getTaskById = async (req: Request, res: Response) => {
   }
 };
 
+export const getTaskSummary = async (req: Request, res: Response) => {
+  try {
+    const tasks = await taskService.getTaskSummary();
+
+    res.status(200).json(tasks);
+  } catch (error) {
+    console.log("Get Task Summary Error ", error);
+    const message = (error as Error).message;
+
+    res.status(500).json({ message });
+  }
+};
+
 export const createTask = async (req: Request, res: Response) => {
   try {
     const data = req.body;

@@ -30,6 +30,12 @@ export const getTaskById = async (id: number) => {
       },
       include: {
         logs: true,
+        assignee: {
+          select: {
+            name: true,
+            role: true,
+          },
+        },
       },
     });
 
@@ -38,6 +44,41 @@ export const getTaskById = async (id: number) => {
     }
 
     return task;
+  } catch (error) {
+    console.error("Task ById Error:", error);
+    if (error instanceof Error && error.message) {
+      throw error;
+    }
+  }
+};
+
+export const getTaskSummary = async () => {
+  try {
+    const pending = await prisma.task.count({
+      where: {
+        status: "Pending",
+      },
+    });
+
+    const inProgress = await prisma.task.count({
+      where: {
+        status: "InProgress",
+      },
+    });
+
+    const completed = await prisma.task.count({
+      where: {
+        status: "Completed",
+      },
+    });
+
+    const chartData = [
+      { status: "Pending", total: pending, fill: "#EF4444" },
+      { status: "InProgress", total: inProgress, fill: "#FBBF24" },
+      { status: "Completed", total: completed, fill: "#22C55E" },
+    ];
+
+    return chartData;
   } catch (error) {
     console.error("Task ById Error:", error);
     if (error instanceof Error && error.message) {
@@ -80,6 +121,7 @@ export const createTask = async (data: CreateTaskDTO, userId: number) => {
         startDate: data.startDate,
         endDate: data.endDate,
         assignedTo: data.assignedTo,
+        status: data.status,
       },
     });
 
