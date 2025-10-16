@@ -1,4 +1,5 @@
 import Dashboard from "@/page/dashboardPage";
+import TaskDetailPage from "@/page/detailTaskPage";
 import RootLayout from "@/page/layouts/rootLayout";
 import { Login } from "@/page/loginPage";
 import { Register } from "@/page/registerPage";
@@ -12,7 +13,7 @@ const route: RouteObject[] = [
   {
     path: "/",
     element: <RootLayout />,
-    children: [{ index: true, element: <Dashboard /> }],
+    children: [{ index: true, element: <Dashboard /> }, { path: "/task", element: <TaskDetailPage /> }],
   },
 
   {
