@@ -16,24 +16,23 @@ import { Textarea } from "@/components/ui/textarea";
 import type { ITask } from "@/type/ITask";
 import React, { useState, useEffect } from "react";
 import { InputDate } from "./ui/inputDate";
+import { useAppDispatch, useAppSelector } from "@/store";
+import { updateTask } from "@/store/task/async";
 
 interface ModalEditTaskProps {
   task?: ITask | null;
   trigger?: React.ReactNode;
-  users?: { id: string; name: string }[];
   onSubmit?: (updatedTask: ITask) => void;
 }
 
-export function ModalEditTask({
-  task,
-  trigger,
-  users,
-  onSubmit,
-}: ModalEditTaskProps) {
+export function ModalEditTask({ task, trigger, onSubmit }: ModalEditTaskProps) {
+  if (!task) return null;
+  const dispatch = useAppDispatch();
+  const { users } = useAppSelector((state) => state.user);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [status, setStatus] = useState<"pending" | "in-progress" | "completed">(
-    "pending"
+  const [status, setStatus] = useState<"Pending" | "InProgress" | "Completed">(
+    "Pending"
   );
   const [assignedTo, setAssignedTo] = useState<number>(0);
   const [startDate, setStartDate] = useState("");
@@ -43,25 +42,56 @@ export function ModalEditTask({
     if (task) {
       setName(task.name);
       setDescription(task.description || "");
-      setStatus(task.status);
+      const normalizedStatus =
+        task.status === "Pending"
+          ? "Pending"
+          : task.status === "InProgress"
+          ? "InProgress"
+          : "Completed";
+
+      setStatus(normalizedStatus);
       setAssignedTo(task.assignedTo);
-      setStartDate(task.startDate || "");
-      setEndDate(task.endDate || "");
+      setStartDate(task.startDate);
+      setEndDate(task.endDate);
     }
   }, [task]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const normalizeStatus = (
+    s: "Pending" | "InProgress" | "Completed"
+  ): "Pending" | "InProgress" | "Completed" => {
+    switch (s) {
+      case "Pending":
+        return "Pending";
+      case "InProgress":
+        return "InProgress";
+      case "Completed":
+        return "Completed";
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!task) return;
 
-    onSubmit({
-      ...task,
+    const updatedData = {
       name,
       description,
-      status,
-      assignedTo,
+      status: normalizeStatus(status),
+      assignedTo: Number(assignedTo),
       startDate,
       endDate,
+    };
+
+    await dispatch(
+      updateTask({
+        id: Number(task.id),
+        data: updatedData,
+      })
+    );
+
+    onSubmit?.({
+      ...task,
+      ...updatedData,
     });
   };
 
@@ -83,7 +113,7 @@ export function ModalEditTask({
         <DialogHeader className="text-center sm:text-left">
           <DialogTitle className="text-lg font-bold">Edit Task</DialogTitle>
           <DialogDescription className="text-sm text-gray-600">
-            Perbarui detail task yang sudah ada.
+            Edit the task details below.
           </DialogDescription>
         </DialogHeader>
 
@@ -98,7 +128,7 @@ export function ModalEditTask({
               onChange={(e) => setName(e.target.value)}
               required
               placeholder="Implement login feature"
-              className="text-sm"
+              className="text-sm border border-[#9a9a9a]"
             />
           </div>
 
@@ -109,13 +139,21 @@ export function ModalEditTask({
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Membuat fitur login menggunakan JWT..."
               rows={3}
-              className="text-sm resize-none"
+              className="text-sm border border-[#9a9a9a]"
             />
           </div>
 
           <div className="grid sm:grid-cols-2 gap-3">
-            <InputDate onChangeDate={setStartDate} value={startDate} />
-            <InputDate onChangeDate={setEndDate} value={endDate} />
+            <InputDate
+              onChangeDate={setStartDate}
+              value={startDate}
+              text="Start Date"
+            />
+            <InputDate
+              onChangeDate={setEndDate}
+              value={endDate}
+              text="End Date"
+            />
           </div>
 
           <div className="grid gap-2">
@@ -123,7 +161,7 @@ export function ModalEditTask({
             <select
               value={assignedTo}
               onChange={(e) => setAssignedTo(parseInt(e.target.value))}
-              className="bg-[#fffdf6] border border-[#f2f1ed] rounded-md px-3 py-2 text-sm focus:outline-none"
+              className="bg-[#fffdf6] border border-[#9a9a9a] rounded-md px-3 py-2 text-sm focus:outline-none"
             >
               <option value="">Select user</option>
               {users.map((user) => (
@@ -142,14 +180,14 @@ export function ModalEditTask({
               value={status}
               onChange={(e) =>
                 setStatus(
-                  e.target.value as "pending" | "in-progress" | "completed"
+                  e.target.value as "Pending" | "InProgress" | "Completed"
                 )
               }
-              className="bg-[#fffdf6] border border-[#f2f1ed] rounded-md px-3 py-2 text-sm focus:outline-none"
+              className="bg-[#fffdf6] border border-[#9a9a9a] rounded-md px-3 py-2 text-sm focus:outline-none"
             >
-              <option value="pending">Pending</option>
-              <option value="in-progress">In Progress</option>
-              <option value="completed">Completed</option>
+              <option value="Pending">Pending</option>
+              <option value="InProgress">In Progress</option>
+              <option value="Completed">Completed</option>
             </select>
           </div>
 

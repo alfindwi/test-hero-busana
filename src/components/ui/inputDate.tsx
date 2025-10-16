@@ -12,6 +12,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { FormatDateLocal } from "@/lib/formatDatelocal";
 
 function formatDate(date: Date | undefined) {
   if (!date) return "";
@@ -25,9 +26,11 @@ function isValidDate(date: Date | undefined) {
 export function InputDate({
   onChangeDate,
   value: propValue,
+  text,
 }: {
   onChangeDate: (date: string) => void;
   value?: string;
+  text: string;
 }) {
   const [open, setOpen] = React.useState(false);
 
@@ -54,14 +57,14 @@ export function InputDate({
   return (
     <div className="flex flex-col gap-3 mt-2">
       <Label>
-        Application Date<span className="text-red-500">*</span>
+        {text}<span className="text-red-500">*</span>
       </Label>
       <div className="relative flex gap-2">
         <Input
           id="date"
           type="date"
           value={value}
-          className="bg-[#fffdf6] pr-10"
+          className="bg-[#fffdf6] pr-10 border border-[#9a9a9a]"
           onChange={(e) => {
             const newDate = new Date(e.target.value);
             const iso = e.target.value;
@@ -111,7 +114,7 @@ export function InputDate({
                 }
 
                 setDate(newDate);
-                const iso = newDate.toISOString().split("T")[0];
+                const iso = FormatDateLocal(newDate);
                 setValue(iso);
                 setOpen(false);
                 onChangeDate(iso);

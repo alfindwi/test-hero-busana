@@ -3,46 +3,48 @@
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import {
-    ChartContainer,
-    ChartTooltip,
-    ChartTooltipContent,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
 } from "@/components/ui/chart";
 
 import type { ChartConfig } from "@/components/ui/chart";
+import { useAppDispatch, useAppSelector } from "@/store";
+import { getAllUserTask } from "@/store/user/async";
+import { useEffect } from "react";
 
 export const description = "User Task Progress Chart";
-
-// ✅ contoh data: setiap user punya 3 status task
-const chartData = [
-  { username: "Alvin", pending: 3, inProgress: 5, completed: 8 },
-  { username: "Rina", pending: 1, inProgress: 6, completed: 9 },
-  { username: "Budi", pending: 4, inProgress: 2, completed: 5 },
-];
 
 const chartConfig = {
   pending: {
     label: "Pending",
-    color: "#EF4444", 
+    color: "#EF4444",
   },
   inProgress: {
     label: "In Progress",
-    color: "#FBBF24", 
+    color: "#FBBF24",
   },
   completed: {
     label: "Completed",
-    color: "#22C55E", 
+    color: "#22C55E",
   },
 } satisfies ChartConfig;
 
 export function ChartBar() {
+  const dispatch = useAppDispatch();
+  const { users: chartData, loading } = useAppSelector((state) => state.user);
+
+  useEffect(() => {
+    dispatch(getAllUserTask());
+  }, [dispatch]);
   return (
     <Card className="bg-[#FDF4E3] shadow-[8px_8px_0px_#222222] border border-black">
       <CardHeader>
@@ -57,7 +59,7 @@ export function ChartBar() {
           <BarChart accessibilityLayer data={chartData}>
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="username"
+              dataKey="name"
               tickLine={false}
               tickMargin={10}
               axisLine={false}

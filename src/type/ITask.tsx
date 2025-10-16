@@ -1,11 +1,17 @@
 export interface ITask {
-  id: string;
+  id: number;
   name: string;
-  status: "pending" | "in-progress" | "completed";
+  status: "Pending" | "InProgress" | "Completed";
   description?: string;
-  startDate?: string;
-  endDate?: string;
+  startDate: string;
+  endDate: string;
   assignedTo: number;
+  assigned: assigned;
+}
+
+export interface assigned {
+  name: string;
+  role: string;
 }
 
 export interface TaskLog {
@@ -28,4 +34,22 @@ export interface TaskDetail {
   created_at: string;
   updated_at: string;
   logs: TaskLog[];
+  assignee: { name: string; role: string };
+}
+
+export interface CreateTaskDTO {
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  assignedTo: number;
+  status: string;
+}
+
+export interface UpdateTaskDTO {
+  name?: string;
+  description?: string;
+  status?: string;
+  startDate?: string;
+  endDate?: string;
 }

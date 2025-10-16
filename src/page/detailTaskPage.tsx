@@ -4,67 +4,44 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
-
-interface TaskLog {
-  id: number;
-  taskId: number;
-  previous_status: string;
-  new_status: string;
-  created_at: string;
-  updated_at: string;
-}
-
-interface TaskDetail {
-  id: number;
-  name: string;
-  status: "Pending" | "InProgress" | "Completed";
-  description: string;
-  startDate: string;
-  endDate: string;
-  assignedTo: number;
-  created_at: string;
-  updated_at: string;
-  logs: TaskLog[];
-}
+import { ArrowLeft, Loader2Icon } from "lucide-react";
+import { useAppDispatch } from "@/store";
+import { getTaskById } from "@/store/task/async";
+import type { TaskDetail } from "@/type/ITask";
 
 export default function TaskDetailPage() {
   const { id } = useParams();
+  const dispatch = useAppDispatch();
+
   const [task, setTask] = useState<TaskDetail | null>(null);
 
   useEffect(() => {
-    const fetchTask = async () => {
-      const response = await fetch(`/api/tasks/${id}`);
-      const data = await response.json();
-      setTask(data);
-    };
+    dispatch(getTaskById(Number(id))).then((res) => setTask(res.payload));
+  }, [dispatch, id]);
 
-    fetchTask();
-  }, [id]);
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Pending":
+        return "bg-[#EF4444] text-white";
+      case "InProgress":
+        return "bg-[#FBBF24] text-black";
+      case "Completed":
+        return "bg-[#22C55E] text-white";
+      default:
+        return "";
+    }
+  };
 
   if (!task) {
     return (
-      <div className="max-w-4xl mx-auto mt-10 text-center font-mono text-gray-600">
-        Loading task detail...
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2Icon className="animate-spin" />
       </div>
     );
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "pending":
-        return "bg-red-500 text-white";
-      case "inprogress":
-        return "bg-yellow-500 text-black";
-      case "completed":
-        return "bg-green-500 text-white";
-      default:
-        return "bg-gray-300 text-black";
-    }
-  };
-
   return (
-    <div className="max-w-4xl mx-auto mt-10 px-4 font-mono">
+    <div className="max-w-4xl mx-auto px-4 font-mono">
       <Button
         variant="outline"
         className="mb-4 border border-black shadow-[4px_4px_0px_#222] hover:shadow-[2px_2px_0px_#222]"
@@ -76,7 +53,10 @@ export default function TaskDetailPage() {
       <Card className="border border-black shadow-[8px_8px_0px_#222] bg-[#f4fafa]">
         <CardHeader>
           <CardTitle className="text-xl font-bold">{task.name}</CardTitle>
-          <p className="text-sm text-gray-600">Assigned to: User #{task.assignedTo}</p>
+          <p className="text-sm text-gray-600">
+            Assigned to: {task.assignee.name}
+          </p>
+          <p className="text-sm text-gray-600">Role : {task.assignee.role}</p>
         </CardHeader>
 
         <CardContent className="space-y-4">
@@ -88,11 +68,11 @@ export default function TaskDetailPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p className="font-semibold">Start Date:</p>
-              <p>{new Date(task.startDate).toLocaleString()}</p>
+              <p>{new Date(task.startDate).toLocaleString().split(",")[0]}</p>
             </div>
             <div>
               <p className="font-semibold">End Date:</p>
-              <p>{new Date(task.endDate).toLocaleString()}</p>
+              <p>{new Date(task.endDate).toLocaleString().split(",")[0]}</p>
             </div>
           </div>
 

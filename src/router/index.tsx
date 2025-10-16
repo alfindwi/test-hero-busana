@@ -3,6 +3,7 @@ import TaskDetailPage from "@/page/detailTaskPage";
 import RootLayout from "@/page/layouts/rootLayout";
 import { Login } from "@/page/loginPage";
 import { Register } from "@/page/registerPage";
+import TaskPage from "@/page/taskPage";
 import {
   createBrowserRouter,
   RouterProvider,
@@ -13,7 +14,11 @@ const route: RouteObject[] = [
   {
     path: "/",
     element: <RootLayout />,
-    children: [{ index: true, element: <Dashboard /> }, { path: "/task", element: <TaskDetailPage /> }],
+    children: [
+      { index: true, element: <Dashboard /> },
+      { path: "/tasks", element: <TaskPage /> },
+      { path: "/tasks/:id", element: <TaskDetailPage /> },
+    ],
   },
 
   {

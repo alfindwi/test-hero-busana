@@ -1,11 +1,12 @@
 "use client";
 
-import { Pie, PieChart } from "recharts";
+import { Pie, PieChart, ResponsiveContainer } from "recharts";
 
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -16,14 +17,11 @@ import {
 } from "@/components/ui/chart";
 
 import type { ChartConfig } from "@/components/ui/chart";
+import { useAppDispatch, useAppSelector } from "@/store";
+import { getTaskSummary } from "@/store/task/async";
+import { useEffect } from "react";
 
 export const description = "A pie chart showing task status with labels";
-
-const chartData = [
-  { status: "Pending", total: 5, fill: "#ED3F27" },
-  { status: "InProgress", total: 8, fill: "#FEB21A" },
-  { status: "Completed", total: 12, fill: "#255F38" },
-];
 
 const chartConfig = {
   total: {
@@ -31,7 +29,7 @@ const chartConfig = {
   },
   Pending: {
     label: "Pending",
-    color: "#ED3F27",
+    color: "#EF4444",
   },
   InProgress: {
     label: "In Progress",
@@ -44,6 +42,12 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function ChartPieWithLabels() {
+  const dispatch = useAppDispatch();
+  const { tasks: chartData } = useAppSelector((state) => state.task);
+
+  useEffect(() => {
+    dispatch(getTaskSummary());
+  }, [dispatch]);
   return (
     <Card className="flex flex-col bg-[#FDF4E3] shadow-[8px_8px_0px_#222222] border border-black">
       <CardHeader className="items-center pb-0">
@@ -52,26 +56,26 @@ export function ChartPieWithLabels() {
       </CardHeader>
 
       <CardContent className="flex-1 pb-0">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
-        >
-          <PieChart>
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-            <Pie
-              data={chartData}
-              dataKey="total"
-              nameKey="status"
-              stroke="0"
-              innerRadius={40}
-              outerRadius={80}
-              label={({ status }) => status}
-            />
-          </PieChart>
+        <ChartContainer config={chartConfig} className="mx-auto w-full h-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent hideLabel />}
+              />
+              <Pie
+                data={chartData}
+                dataKey="total"
+                nameKey="status"
+                stroke="0"
+                innerRadius="50%"
+                outerRadius="80%"
+                label={({ status, total }) => (total > 0 ? status : "")}
+              />
+            </PieChart>
+          </ResponsiveContainer>
         </ChartContainer>
+       
       </CardContent>
     </Card>
   );
