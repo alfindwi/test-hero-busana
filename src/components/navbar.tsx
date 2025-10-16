@@ -1,74 +1,63 @@
-"use client";
-
-import { useState } from "react";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { DoorOpen } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
 
 export function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
-    <nav className="bg-[#f4fafa] border-b border-black shadow-[4px_4px_0px_#222] font-mono z-50 fixed top-0 w-full">
+    <nav className="bg-[#f4fafa] border-b border-black shadow-[4px_4px_0px_#222] font-mono z-50">
       <div className="max-w-6xl mx-auto flex justify-between items-center px-4 py-3">
-        <Link to="/" className="text-xl font-bold text-black tracking-wide">
+        <Link to="/" className="text-xl font-bold text-black">
           HERO BUSANA.
         </Link>
 
-        <button
-          className="md:hidden text-black"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? <X size={26} /> : <Menu size={26} />}
-        </button>
-
-        <div className="hidden md:flex space-x-6 text-sm font-semibold">
-          <Link to="/" className="hover:text-gray-700 transition">
-            Dashboard
-          </Link>
-          <Link to="/tasks" className="hover:text-gray-700 transition">
-            Tasks
-          </Link>
-          <Link to="/users" className="hover:text-gray-700 transition">
-            Users
-          </Link>
-          <Link to="/reports" className="hover:text-gray-700 transition">
-            Reports
-          </Link>
+        <div className="hidden md:flex gap-6 items-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Avatar className="rounded-full size-10 cursor-pointer">
+                <AvatarImage
+                  src="https://img.freepik.com/premium-photo/memoji-emoji-handsome-smiling-man-white-background_826801-6987.jpg?semt=ais_hybrid&w=740&q=80"
+                  alt="User"
+                />
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="bg-red-500 border border-black/20 rounded-xl w-52 px-2 py-2 shadow-[6px_6px_0px_#222] font-mono"
+            >
+              <DropdownMenuItem
+                asChild
+                className="data-[highlighted]:bg-red-500 data-[highlighted]:text-white data-[highlighted]:outline-none"
+              >
+                <Button className="flex justify-start items-center text-left text-sm cursor-pointer font-mono w-full px-3 py-2 rounded-lg transition bg-red-500 hover:bg-red-500 hover:text-white">
+                  <DoorOpen className="text-white" />
+                  Logout
+                </Button>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+            <DropdownMenuContent
+              align="end"
+              className="bg-red-500 border border-black/20 rounded-xl w-52 px-2 py-2 shadow-[6px_6px_0px_#222] font-mono"
+            >
+              <DropdownMenuItem
+                asChild
+                className="data-[highlighted]:bg-red-500 data-[highlighted]:text-white data-[highlighted]:outline-none"
+              >
+                <Button className="flex justify-start items-center text-left text-sm cursor-pointer font-mono w-full px-3 py-2 rounded-lg transition bg-red-500 hover:bg-red-500 hover:text-white">
+                  <DoorOpen className="text-white" />
+                  Logout
+                </Button>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
-
-      {isOpen && (
-        <div className="md:hidden border-t border-black bg-[#f4fafa] shadow-[4px_4px_0px_#222] px-4 py-3 space-y-2">
-          <Link
-            to="/"
-            className="block text-sm font-semibold hover:text-gray-700 transition"
-            onClick={() => setIsOpen(false)}
-          >
-            Dashboard
-          </Link>
-          <Link
-            to="/tasks"
-            className="block text-sm font-semibold hover:text-gray-700 transition"
-            onClick={() => setIsOpen(false)}
-          >
-            Tasks
-          </Link>
-          <Link
-            to="/users"
-            className="block text-sm font-semibold hover:text-gray-700 transition"
-            onClick={() => setIsOpen(false)}
-          >
-            Users
-          </Link>
-          <Link
-            to="/reports"
-            className="block text-sm font-semibold hover:text-gray-700 transition"
-            onClick={() => setIsOpen(false)}
-          >
-            Reports
-          </Link>
-        </div>
-      )}
     </nav>
   );
 }

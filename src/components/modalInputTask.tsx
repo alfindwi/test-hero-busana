@@ -1,171 +1,96 @@
-import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { InputDate } from "./ui/inputDate";
-import type { IUser } from "@/type/IUser";
 
-interface ModalInputTaskProps {
+interface ModalInputTask {
   trigger?: React.ReactNode;
-  users?: IUser[];
-  onSubmit?: (task: {
-    title: string;
-    status: "pending" | "in-progress" | "completed";
-    description?: string;
-    startDate?: string;
-    endDate?: string;
-    assignedTo?: string;
-  }) => void;
 }
 
-export function ModalInputTask({
-  trigger,
-  users = [],
-  onSubmit,
-}: ModalInputTaskProps) {
-  const [title, setTitle] = useState("");
-  const [status, setStatus] = useState<
-    "pending" | "in-progress" | "completed" | ""
-  >("");
-  const [description, setDescription] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [assignedTo, setAssignedTo] = useState("");
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title || !status) return alert("Please fill all required fields");
-
-    onSubmit?.({
-      title,
-      status,
-      description,
-      startDate,
-      endDate,
-      assignedTo,
-    });
-
-    setTitle("");
-    setStatus("");
-    setDescription("");
-    setStartDate("");
-    setEndDate("");
-    setAssignedTo("");
-  };
-
-  return (
-    <Dialog>
+export function ModalInputTask({ trigger }: ModalInputTask) {
+    return (
+        <Dialog>
       <DialogTrigger asChild>
         {trigger || (
           <Button variant="outline" className="text-sm px-3 py-1">
-            Create
+            Edit
           </Button>
         )}
       </DialogTrigger>
 
-      <DialogContent
-        className="bg-[#FFFDF6] text-black border border-black rounded-lg font-mono 
-        shadow-[6px_6px_0px_#222222] 
-        max-w-[95%] sm:max-w-lg w-full p-4 sm:p-6 overflow-y-auto max-h-[90vh]"
-      >
-        <DialogHeader className="text-center sm:text-left">
-          <DialogTitle className="text-lg font-bold">Create Task</DialogTitle>
-          <DialogDescription className="text-sm text-gray-600">
-            Tambahkan task baru beserta detail dan statusnya.
+      <DialogContent className="bg-[#FFFDF6] text-black border border-black rounded-lg font-mono shadow-[8px_8px_0px_#222222]">
+        <DialogHeader>
+          <DialogTitle className="text-lg">Create Company</DialogTitle>
+          <DialogDescription className="text-sm">
+            Create company information, position, method and date
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-3 mt-4">
-          <div className="grid gap-2">
-            <Label>
-              Task Title<span className="text-red-500">*</span>
-            </Label>
-            <Input
-              type="text"
-              placeholder="Implement login feature"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-              className="text-sm"
-            />
+        <form >
+          <div className="space-y-2 mt-4">
+            <div className="grid gap-3">
+              <Label>
+                Company Name<span className="text-red-500">*</span>
+              </Label>
+              <Input
+                type="text"
+                placeholder="PT. XYZ"
+                required
+              />
+            </div>
+            <div className="grid gap-3 mt-4">
+              <Label>
+                Position<span className="text-red-500">*</span>
+              </Label>
+              <Input
+                type="text"
+                placeholder="Fullstack Developer"
+                required
+              />
+            </div>
+            <div className="grid gap-3 mt-4">
+              <Label>
+                Application Method<span className="text-red-500">*</span>
+              </Label>
+              <Input
+                type="text"
+                placeholder="Email"
+                required
+              />
+            </div>
+            <div className="grid gap-3 mt-4">
+              <Label htmlFor="status">
+                Status<span className="text-red-500">*</span>
+              </Label>
+              <select
+                id="status"
+                value={status}
+                required
+                className="bg-[#fffdf6] border border-[#f2f1ed] rounded-md px-3 py-2 font-mono text-sm focus:outline-none"
+              >
+                <option value="">Select status</option>
+                <option value="Applied">Applied</option>
+                <option value="Interview">Interview</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+            </div>
           </div>
-
-          <div className="grid gap-2">
-            <Label>Description</Label>
-            <Textarea
-              placeholder="Membuat fitur login menggunakan JWT..."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={3}
-              className="text-sm resize-none"
-            />
-          </div>
-
-          <div className="grid sm:grid-cols-2 gap-3">
-            <InputDate onChangeDate={setStartDate} value={startDate} />
-            <InputDate onChangeDate={setEndDate} value={endDate} />
-          </div>
-
-          <div className="grid gap-2">
-            <Label>Assigned To</Label>
-            <select
-              id="assignedTo"
-              value={assignedTo}
-              onChange={(e) => setAssignedTo(e.target.value)}
-              className="bg-[#fffdf6] border border-[#f2f1ed] rounded-md px-3 py-2 text-sm focus:outline-none"
-            >
-              <option value="">Select user</option>
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="grid gap-2">
-            <Label>
-              Status<span className="text-red-500">*</span>
-            </Label>
-            <select
-              id="status"
-              value={status}
-              onChange={(e) =>
-                setStatus(
-                  e.target.value as "pending" | "in-progress" | "completed"
-                )
-              }
-              required
-              className="bg-[#fffdf6] border border-[#f2f1ed] rounded-md px-3 py-2 text-sm focus:outline-none"
-            >
-              <option value="">Select status</option>
-              <option value="pending">Pending</option>
-              <option value="in-progress">In Progress</option>
-              <option value="completed">Completed</option>
-            </select>
-          </div>
-
           <DialogClose asChild>
-            <Button
-              type="submit"
-              className="w-full sm:w-auto mt-5"
-              variant="blue"
-            >
-              Save Task
+            <Button type="submit" className="mt-4" variant={"blue"}>
+              Save
             </Button>
           </DialogClose>
         </form>
       </DialogContent>
     </Dialog>
-  );
+    )
 }
