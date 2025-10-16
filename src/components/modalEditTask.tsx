@@ -1,4 +1,5 @@
-import { useState } from "react";
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,55 +13,56 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import type { ITask } from "@/type/ITask";
+import React, { useState, useEffect } from "react";
 import { InputDate } from "./ui/inputDate";
-import type { IUser } from "@/type/IUser";
 
-interface ModalInputTaskProps {
+interface ModalEditTaskProps {
+  task?: ITask | null;
   trigger?: React.ReactNode;
-  users?: IUser[];
-  onSubmit?: (task: {
-    title: string;
-    status: "pending" | "in-progress" | "completed";
-    description?: string;
-    startDate?: string;
-    endDate?: string;
-    assignedTo?: string;
-  }) => void;
+  users?: { id: string; name: string }[];
+  onSubmit?: (updatedTask: ITask) => void;
 }
 
-export function ModalInputTask({
+export function ModalEditTask({
+  task,
   trigger,
-  users = [],
+  users,
   onSubmit,
-}: ModalInputTaskProps) {
-  const [title, setTitle] = useState("");
-  const [status, setStatus] = useState<
-    "pending" | "in-progress" | "completed" | ""
-  >("");
+}: ModalEditTaskProps) {
+  const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [status, setStatus] = useState<"pending" | "in-progress" | "completed">(
+    "pending"
+  );
+  const [assignedTo, setAssignedTo] = useState<number>(0);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [assignedTo, setAssignedTo] = useState("");
+
+  useEffect(() => {
+    if (task) {
+      setName(task.name);
+      setDescription(task.description || "");
+      setStatus(task.status);
+      setAssignedTo(task.assignedTo);
+      setStartDate(task.startDate || "");
+      setEndDate(task.endDate || "");
+    }
+  }, [task]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !status) return alert("Please fill all required fields");
+    if (!task) return;
 
-    onSubmit?.({
-      title,
-      status,
+    onSubmit({
+      ...task,
+      name,
       description,
+      status,
+      assignedTo,
       startDate,
       endDate,
-      assignedTo,
     });
-
-    setTitle("");
-    setStatus("");
-    setDescription("");
-    setStartDate("");
-    setEndDate("");
-    setAssignedTo("");
   };
 
   return (
@@ -68,7 +70,7 @@ export function ModalInputTask({
       <DialogTrigger asChild>
         {trigger || (
           <Button variant="outline" className="text-sm px-3 py-1">
-            Create
+            Edit
           </Button>
         )}
       </DialogTrigger>
@@ -79,9 +81,9 @@ export function ModalInputTask({
         max-w-[95%] sm:max-w-lg w-full p-4 sm:p-6 overflow-y-auto max-h-[90vh]"
       >
         <DialogHeader className="text-center sm:text-left">
-          <DialogTitle className="text-lg font-bold">Create Task</DialogTitle>
+          <DialogTitle className="text-lg font-bold">Edit Task</DialogTitle>
           <DialogDescription className="text-sm text-gray-600">
-            Tambahkan task baru beserta detail dan statusnya.
+            Perbarui detail task yang sudah ada.
           </DialogDescription>
         </DialogHeader>
 
@@ -92,10 +94,10 @@ export function ModalInputTask({
             </Label>
             <Input
               type="text"
-              placeholder="Implement login feature"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               required
+              placeholder="Implement login feature"
               className="text-sm"
             />
           </div>
@@ -103,9 +105,9 @@ export function ModalInputTask({
           <div className="grid gap-2">
             <Label>Description</Label>
             <Textarea
-              placeholder="Membuat fitur login menggunakan JWT..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              placeholder="Membuat fitur login menggunakan JWT..."
               rows={3}
               className="text-sm resize-none"
             />
@@ -119,9 +121,8 @@ export function ModalInputTask({
           <div className="grid gap-2">
             <Label>Assigned To</Label>
             <select
-              id="assignedTo"
               value={assignedTo}
-              onChange={(e) => setAssignedTo(e.target.value)}
+              onChange={(e) => setAssignedTo(parseInt(e.target.value))}
               className="bg-[#fffdf6] border border-[#f2f1ed] rounded-md px-3 py-2 text-sm focus:outline-none"
             >
               <option value="">Select user</option>
@@ -133,35 +134,34 @@ export function ModalInputTask({
             </select>
           </div>
 
+          {/* Status */}
           <div className="grid gap-2">
             <Label>
               Status<span className="text-red-500">*</span>
             </Label>
             <select
-              id="status"
               value={status}
               onChange={(e) =>
                 setStatus(
                   e.target.value as "pending" | "in-progress" | "completed"
                 )
               }
-              required
               className="bg-[#fffdf6] border border-[#f2f1ed] rounded-md px-3 py-2 text-sm focus:outline-none"
             >
-              <option value="">Select status</option>
               <option value="pending">Pending</option>
               <option value="in-progress">In Progress</option>
               <option value="completed">Completed</option>
             </select>
           </div>
 
+          {/* Submit */}
           <DialogClose asChild>
             <Button
               type="submit"
               className="w-full sm:w-auto mt-5"
               variant="blue"
             >
-              Save Task
+              Save Changes
             </Button>
           </DialogClose>
         </form>
